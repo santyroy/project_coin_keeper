@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,24 +44,27 @@ public class AppExceptionHandler {
     @ExceptionHandler(value = UserRoleNotFoundException.class)
     public ResponseEntity<ApiResponse> handleUserRoleNotFoundException(UserRoleNotFoundException ex) {
         LOG.error(ex.getMessage());
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        errors.put("Not Found", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ApiResponse(false, 404, "error", detail));
+                .body(new ApiResponse(false, 404, "error", errors));
     }
 
     @ExceptionHandler(value = UserEmailAlreadyExistsException.class)
     public ResponseEntity<ApiResponse> handleUserEmailAlreadyExistsException(UserEmailAlreadyExistsException ex) {
         LOG.error(ex.getMessage());
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        errors.put("Already Exists", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponse(false, 400, "error", detail));
+                .body(new ApiResponse(false, 400, "error", errors));
     }
 
     @ExceptionHandler(value = UserNotFoundException.class)
     public ResponseEntity<ApiResponse> handleUserNotFoundException(UserNotFoundException ex) {
         LOG.error(ex.getMessage());
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        errors.put("Not Found", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ApiResponse(false, 404, "error", detail));
+                .body(new ApiResponse(false, 404, "error", errors));
     }
 }
