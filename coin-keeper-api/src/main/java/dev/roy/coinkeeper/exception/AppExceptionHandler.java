@@ -57,4 +57,12 @@ public class AppExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponse(false, 400, "error", detail));
     }
+
+    @ExceptionHandler(value = UserNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        LOG.error(ex.getMessage());
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse(false, 404, "error", detail));
+    }
 }

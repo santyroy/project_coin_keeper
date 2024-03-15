@@ -6,6 +6,7 @@ import dev.roy.coinkeeper.entity.Budget;
 import dev.roy.coinkeeper.entity.Role;
 import dev.roy.coinkeeper.entity.User;
 import dev.roy.coinkeeper.exception.UserEmailAlreadyExistsException;
+import dev.roy.coinkeeper.exception.UserNotFoundException;
 import dev.roy.coinkeeper.exception.UserRoleNotFoundException;
 import dev.roy.coinkeeper.repository.RoleRepository;
 import dev.roy.coinkeeper.repository.UserRepository;
@@ -52,5 +53,17 @@ public class UserService {
         User savedUser = userRepository.save(user);
         LOG.info("User: " + savedUser.getName() + " with email: " + savedUser.getEmail() + " added to database");
         return new UserResponseDTO(savedUser.getName(), savedUser.getEmail());
+    }
+
+    public UserResponseDTO findUserById(Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        // Check if user does not exist
+        if(userOpt.isEmpty()) {
+            throw new UserNotFoundException("User with ID: " + userId + " not found");
+        }
+
+        User user = userOpt.get();
+        return new UserResponseDTO(user.getName(), user.getEmail());
     }
 }

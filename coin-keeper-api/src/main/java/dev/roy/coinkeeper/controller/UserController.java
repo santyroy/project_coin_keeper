@@ -34,4 +34,13 @@ public class UserController {
                 .status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, 201, "User created", userResponseDTO));
     }
+
+    @GetMapping("{userId}")
+    public ResponseEntity<ApiResponse> findUserById(@PathVariable Integer userId) {
+        LOG.info("Searching user started");
+        UserResponseDTO userResponseDTO = userService.findUserById(userId);
+        LOG.info("Searching user completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "User found", userResponseDTO));
+    }
 }
