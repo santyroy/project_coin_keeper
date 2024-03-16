@@ -43,4 +43,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "User found", userResponseDTO));
     }
+
+    @DeleteMapping("{userId}")
+    public ResponseEntity<ApiResponse> deleteUserById(@PathVariable Integer userId) {
+        LOG.info("Deletion of user started");
+        userService.deleteUserById(userId);
+        LOG.info("Deletion of user completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "User deleted", null));
+    }
 }

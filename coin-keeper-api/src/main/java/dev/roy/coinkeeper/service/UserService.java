@@ -66,4 +66,15 @@ public class UserService {
         User user = userOpt.get();
         return new UserResponseDTO(user.getName(), user.getEmail());
     }
+
+    public void deleteUserById(Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        // Check if user does not exist
+        if(userOpt.isEmpty()) {
+            throw new UserNotFoundException("User with ID: " + userId + " not found");
+        }
+
+        userRepository.delete(userOpt.get());
+    }
 }
