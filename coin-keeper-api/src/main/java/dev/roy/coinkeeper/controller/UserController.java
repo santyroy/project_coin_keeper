@@ -52,4 +52,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "User deleted", null));
     }
+
+    @PutMapping("{userId}")
+    public ResponseEntity<ApiResponse> updateUserById(@PathVariable Integer userId, @RequestBody UserRequestDTO dto) {
+        LOG.info("Updating user started");
+        UserResponseDTO userResponseDTO = userService.updateUserById(userId, dto);
+        LOG.info("Updating user completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "User updated", userResponseDTO));
+    }
 }

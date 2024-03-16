@@ -59,7 +59,7 @@ public class UserService {
         Optional<User> userOpt = userRepository.findById(userId);
 
         // Check if user does not exist
-        if(userOpt.isEmpty()) {
+        if (userOpt.isEmpty()) {
             throw new UserNotFoundException("User with ID: " + userId + " not found");
         }
 
@@ -71,10 +71,41 @@ public class UserService {
         Optional<User> userOpt = userRepository.findById(userId);
 
         // Check if user does not exist
-        if(userOpt.isEmpty()) {
+        if (userOpt.isEmpty()) {
             throw new UserNotFoundException("User with ID: " + userId + " not found");
         }
 
         userRepository.delete(userOpt.get());
+    }
+
+    public UserResponseDTO updateUserById(Integer userId, UserRequestDTO dto) {
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        // Check if user does not exist
+        if (userOpt.isEmpty()) {
+            throw new UserNotFoundException("User with ID: " + userId + " not found");
+        }
+
+        User existingUser = userOpt.get();
+        if (null != dto.name() && !dto.name().isBlank()) {
+            LOG.info("Updating name");
+            existingUser.setName(dto.name());
+        }
+        if (null != dto.email() && !dto.email().isBlank()) {
+            LOG.info("Updating email");
+            existingUser.setEmail(dto.email());
+        }
+        if (null != dto.picture() && !dto.picture().isBlank()) {
+            LOG.info("Updating picture");
+            existingUser.setPicture(dto.picture());
+        }
+        if (null != dto.password() && !dto.password().isBlank()) {
+            LOG.info("Updating password");
+            // TODO: Need to encrypt password using BCrypt
+            existingUser.setPassword(dto.password());
+        }
+
+        User savedUser = userRepository.save(existingUser);
+        return new UserResponseDTO(savedUser.getName(), savedUser.getEmail());
     }
 }
