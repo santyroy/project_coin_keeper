@@ -2,7 +2,6 @@ package dev.roy.coinkeeper.service;
 
 import dev.roy.coinkeeper.dto.UserRequestDTO;
 import dev.roy.coinkeeper.dto.UserResponseDTO;
-import dev.roy.coinkeeper.entity.Budget;
 import dev.roy.coinkeeper.entity.Role;
 import dev.roy.coinkeeper.entity.User;
 import dev.roy.coinkeeper.exception.UserEmailAlreadyExistsException;
@@ -16,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,6 +23,7 @@ import java.util.Set;
 
 @Service
 @Slf4j
+@Transactional
 public class UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
@@ -51,7 +52,7 @@ public class UserService {
         // TODO: Need to encrypt password using BCrypt
         User user = new User(0,
                 dto.name(), dto.email(), dto.password(), dto.picture(),
-                LocalDateTime.now(), Set.of(roleOpt.get()), Set.of(new Budget()));
+                LocalDateTime.now(), Set.of(roleOpt.get()), null);
         User savedUser = userRepository.save(user);
         LOG.info("User: " + savedUser.getName() + " with email: " + savedUser.getEmail() + " added to database");
         return new UserResponseDTO(savedUser.getName(), savedUser.getEmail());

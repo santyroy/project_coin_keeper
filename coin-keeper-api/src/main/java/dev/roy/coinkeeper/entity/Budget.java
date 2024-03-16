@@ -2,8 +2,9 @@ package dev.roy.coinkeeper.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -12,7 +13,8 @@ import java.util.Set;
 @Table(name = "budgets")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class Budget {
 
     @Id
