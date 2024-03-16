@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,5 +61,15 @@ public class UserController {
         LOG.info("Updating user completed");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "User updated", userResponseDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse> findAllUsers(@RequestParam(required = false, defaultValue = "0") int page,
+                                                    @RequestParam(required = false, defaultValue = "5") int size) {
+        LOG.info("Fetching all user started");
+        Page<UserResponseDTO> allUsers = userService.findAllUsers(page, size);
+        LOG.info("Fetching all user completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Users fetched", allUsers));
     }
 }

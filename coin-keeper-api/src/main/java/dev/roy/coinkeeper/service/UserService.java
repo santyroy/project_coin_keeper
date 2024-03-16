@@ -13,11 +13,15 @@ import dev.roy.coinkeeper.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -107,5 +111,11 @@ public class UserService {
 
         User savedUser = userRepository.save(existingUser);
         return new UserResponseDTO(savedUser.getName(), savedUser.getEmail());
+    }
+
+    public Page<UserResponseDTO> findAllUsers(int pageNo, int pageSize) {
+        PageRequest page = PageRequest.of(pageNo, pageSize);
+        Page<User> users = userRepository.findAll(page);
+        return users.map(user -> new UserResponseDTO(user.getName(), user.getEmail()));
     }
 }
