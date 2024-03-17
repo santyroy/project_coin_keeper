@@ -67,4 +67,13 @@ public class AppExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse(false, 404, "error", errors));
     }
+
+    @ExceptionHandler(value = BudgetNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleBudgetNotFoundException(BudgetNotFoundException ex) {
+        LOG.error(ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        errors.put("Not Found", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse(false, 404, "error", errors));
+    }
 }

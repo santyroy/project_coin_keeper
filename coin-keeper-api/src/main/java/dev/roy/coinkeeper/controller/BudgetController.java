@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/budgets")
@@ -33,5 +30,14 @@ public class BudgetController {
         LOG.info("Adding new budget for user completed");
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ApiResponse(true, 201, "Budget created", budgetResponseDTO));
+    }
+
+    @GetMapping("{budgetId}")
+    public ResponseEntity<ApiResponse> findBudgetById(@PathVariable Integer budgetId) {
+        LOG.info("Searching budget for user started");
+        BudgetResponseDTO budgetResponseDTO = budgetService.findBudgetById(budgetId);
+        LOG.info("Searching budget for user completed");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ApiResponse(true, 200, "Budget found", budgetResponseDTO));
     }
 }

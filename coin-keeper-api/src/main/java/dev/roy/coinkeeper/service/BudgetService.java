@@ -4,6 +4,7 @@ import dev.roy.coinkeeper.dto.BudgetRequestDTO;
 import dev.roy.coinkeeper.dto.BudgetResponseDTO;
 import dev.roy.coinkeeper.entity.Budget;
 import dev.roy.coinkeeper.entity.User;
+import dev.roy.coinkeeper.exception.BudgetNotFoundException;
 import dev.roy.coinkeeper.exception.UserNotFoundException;
 import dev.roy.coinkeeper.repository.BudgetRepository;
 import dev.roy.coinkeeper.repository.UserRepository;
@@ -57,7 +58,17 @@ public class BudgetService {
         }
 
         Budget savedBudget = budgetRepository.save(budget);
-        return new BudgetResponseDTO(savedBudget.getName(), savedBudget.getType(), savedBudget.getGoal(),
+        return new BudgetResponseDTO(savedBudget.getId(), savedBudget.getName(), savedBudget.getType(), savedBudget.getGoal(),
                 savedBudget.getOpenDate(), userId);
+    }
+
+    public BudgetResponseDTO findBudgetById(Integer budgetId) {
+        Optional<Budget> budgetOpt = budgetRepository.findById(budgetId);
+        if (budgetOpt.isEmpty()) {
+            throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
+        }
+        Budget budget = budgetOpt.get();
+        return new BudgetResponseDTO(budget.getId() ,budget.getName(), budget.getType(), budget.getGoal(),
+                budget.getOpenDate(), budget.getUser().getId());
     }
 }
