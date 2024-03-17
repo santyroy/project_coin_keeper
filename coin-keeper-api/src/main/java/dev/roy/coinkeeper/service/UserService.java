@@ -88,8 +88,8 @@ public class UserService {
             existingUser.setPassword(dto.password());
         }
 
-        User savedUser = userRepository.save(existingUser);
-        return new UserResponseDTO(savedUser.getName(), savedUser.getEmail());
+        User updateddUser = userRepository.save(existingUser);
+        return new UserResponseDTO(updateddUser.getName(), updateddUser.getEmail());
     }
 
     public Page<UserResponseDTO> findAllUsers(int pageNo, int pageSize) {

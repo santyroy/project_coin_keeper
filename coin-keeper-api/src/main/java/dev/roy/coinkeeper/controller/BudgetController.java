@@ -3,6 +3,7 @@ package dev.roy.coinkeeper.controller;
 import dev.roy.coinkeeper.dto.ApiResponse;
 import dev.roy.coinkeeper.dto.BudgetRequestDTO;
 import dev.roy.coinkeeper.dto.BudgetResponseDTO;
+import dev.roy.coinkeeper.dto.UserResponseDTO;
 import dev.roy.coinkeeper.service.BudgetService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -48,5 +49,15 @@ public class BudgetController {
         LOG.info("Deletion of budget completed");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "Budget deleted", null));
+    }
+
+    @PutMapping("{budgetId}")
+    public ResponseEntity<ApiResponse> updateBudgetById(@PathVariable Integer budgetId,
+                                                        @RequestBody BudgetRequestDTO dto) {
+        LOG.info("Updating budget started");
+        BudgetResponseDTO budgetResponseDTO = budgetService.updateBudgetById(budgetId, dto);
+        LOG.info("Updating budget completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Budget updated", budgetResponseDTO));
     }
 }

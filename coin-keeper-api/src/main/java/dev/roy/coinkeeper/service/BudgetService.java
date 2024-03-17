@@ -64,13 +64,30 @@ public class BudgetService {
 
     public BudgetResponseDTO findBudgetById(Integer budgetId) {
         Budget budget = getBudget(budgetId);
-        return new BudgetResponseDTO(budget.getId() ,budget.getName(), budget.getType(), budget.getGoal(),
+        return new BudgetResponseDTO(budget.getId(), budget.getName(), budget.getType(), budget.getGoal(),
                 budget.getOpenDate(), budget.getUser().getId());
     }
 
     public void deleteBudgetById(Integer budgetId) {
         Budget budget = getBudget(budgetId);
         budgetRepository.delete(budget);
+    }
+
+    public BudgetResponseDTO updateBudgetById(Integer budgetId, BudgetRequestDTO dto) {
+        Budget existingBudget = getBudget(budgetId);
+        if (dto.name() != null) {
+            existingBudget.setName(dto.name());
+        }
+        if (dto.type() != null) {
+            existingBudget.setType(dto.type());
+        }
+        if (dto.goal() != null) {
+            existingBudget.setGoal(dto.goal());
+        }
+
+        Budget updatedBudget = budgetRepository.save(existingBudget);
+        return new BudgetResponseDTO(updatedBudget.getId(), updatedBudget.getName(), updatedBudget.getType(),
+                updatedBudget.getGoal(), updatedBudget.getOpenDate(), updatedBudget.getUser().getId());
     }
 
     private Budget getBudget(Integer budgetId) {
