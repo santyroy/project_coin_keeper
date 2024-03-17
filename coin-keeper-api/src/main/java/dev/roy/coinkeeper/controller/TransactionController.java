@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
@@ -32,6 +29,15 @@ public class TransactionController {
         TransactionResponseDTO transactionResponseDTO = transactionService.addTransaction(dto);
         LOG.info("Adding new transaction for budget completed");
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse(true, 200, "Transaction added", transactionResponseDTO));
+                .body(new ApiResponse(true, 201, "Transaction added", transactionResponseDTO));
+    }
+
+    @GetMapping("{transactionId}")
+    public ResponseEntity<ApiResponse> findTransactionById(@PathVariable Integer transactionId) {
+        LOG.info("Searching for transaction started");
+        TransactionResponseDTO transactionResponseDTO = transactionService.findTransactionById(transactionId);
+        LOG.info("Searching for transaction completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Transaction found", transactionResponseDTO));
     }
 }

@@ -6,6 +6,7 @@ import dev.roy.coinkeeper.entity.Budget;
 import dev.roy.coinkeeper.entity.Transaction;
 import dev.roy.coinkeeper.entity.TransactionType;
 import dev.roy.coinkeeper.exception.BudgetNotFoundException;
+import dev.roy.coinkeeper.exception.TransactionNotFoundException;
 import dev.roy.coinkeeper.repository.BudgetRepository;
 import dev.roy.coinkeeper.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,19 @@ public class TransactionService {
         Transaction savedTransaction = transactionRepository.save(transaction);
         return new TransactionResponseDTO(savedTransaction.getType(), savedTransaction.getAmount(),
                 savedTransaction.getCategory(), savedTransaction.getDate(), savedTransaction.getBudget().getId());
+    }
+
+    public TransactionResponseDTO findTransactionById(Integer transactionId) {
+        Transaction transaction = getTransaction(transactionId);
+        return new TransactionResponseDTO(transaction.getType(), transaction.getAmount(), transaction.getCategory(),
+                transaction.getDate(), transaction.getBudget().getId());
+    }
+
+    private Transaction getTransaction(Integer transactionId) {
+        Optional<Transaction> transactionOpt = transactionRepository.findById(transactionId);
+        if (transactionOpt.isEmpty()) {
+            throw new TransactionNotFoundException("Transaction with id: " + transactionId + " not found");
+        }
+        return transactionOpt.get();
     }
 }
