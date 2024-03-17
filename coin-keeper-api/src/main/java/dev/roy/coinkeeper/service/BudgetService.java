@@ -63,12 +63,21 @@ public class BudgetService {
     }
 
     public BudgetResponseDTO findBudgetById(Integer budgetId) {
+        Budget budget = getBudget(budgetId);
+        return new BudgetResponseDTO(budget.getId() ,budget.getName(), budget.getType(), budget.getGoal(),
+                budget.getOpenDate(), budget.getUser().getId());
+    }
+
+    public void deleteBudgetById(Integer budgetId) {
+        Budget budget = getBudget(budgetId);
+        budgetRepository.delete(budget);
+    }
+
+    private Budget getBudget(Integer budgetId) {
         Optional<Budget> budgetOpt = budgetRepository.findById(budgetId);
         if (budgetOpt.isEmpty()) {
             throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
         }
-        Budget budget = budgetOpt.get();
-        return new BudgetResponseDTO(budget.getId() ,budget.getName(), budget.getType(), budget.getGoal(),
-                budget.getOpenDate(), budget.getUser().getId());
+        return budgetOpt.get();
     }
 }

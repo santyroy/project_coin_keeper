@@ -40,4 +40,13 @@ public class BudgetController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ApiResponse(true, 200, "Budget found", budgetResponseDTO));
     }
+
+    @DeleteMapping("{budgetId}")
+    public ResponseEntity<ApiResponse> deleteBudgetById(@PathVariable Integer budgetId) {
+        LOG.info("Deletion of budget started");
+        budgetService.deleteBudgetById(budgetId);
+        LOG.info("Deletion of budget completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Budget deleted", null));
+    }
 }
