@@ -54,6 +54,11 @@ public class TransactionService {
                 transaction.getDate(), transaction.getBudget().getId());
     }
 
+    public void deleteTransactionById(Integer transactionId) {
+        Transaction transaction = getTransaction(transactionId);
+        transactionRepository.delete(transaction);
+    }
+
     private Transaction getTransaction(Integer transactionId) {
         Optional<Transaction> transactionOpt = transactionRepository.findById(transactionId);
         if (transactionOpt.isEmpty()) {
