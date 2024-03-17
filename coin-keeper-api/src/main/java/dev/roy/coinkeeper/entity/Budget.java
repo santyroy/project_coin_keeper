@@ -26,7 +26,7 @@ public class Budget {
     private LocalDateTime openDate;
     private Float goal;
 
-    @OneToMany(mappedBy = "budget")
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Transaction> transactions;
 
     @ManyToOne

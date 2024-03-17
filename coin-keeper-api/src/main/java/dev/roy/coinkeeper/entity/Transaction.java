@@ -2,8 +2,9 @@ package dev.roy.coinkeeper.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -11,14 +12,16 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "transaction_id")
     private Integer id;
-    private Enum<TransactionType> type;
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
     private Float amount;
     private LocalDateTime date;
     private String category;
