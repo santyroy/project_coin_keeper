@@ -3,7 +3,6 @@ package dev.roy.coinkeeper.controller;
 import dev.roy.coinkeeper.dto.ApiResponse;
 import dev.roy.coinkeeper.dto.BudgetRequestDTO;
 import dev.roy.coinkeeper.dto.BudgetResponseDTO;
-import dev.roy.coinkeeper.dto.UserResponseDTO;
 import dev.roy.coinkeeper.service.BudgetService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
