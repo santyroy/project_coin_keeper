@@ -7,6 +7,7 @@ import dev.roy.coinkeeper.service.TransactionService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +57,16 @@ public class TransactionController {
         LOG.info("Updating transaction started");
         TransactionResponseDTO transactionResponseDTO = transactionService.updateTransactionById(transactionId, dto);
         LOG.info("Updating transaction completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Transaction found", transactionResponseDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse> findAllTransaction(@RequestParam(required = false, defaultValue = "0") int page,
+                                                          @RequestParam(required = false, defaultValue = "5") int size) {
+        LOG.info("Fetching all transactions started");
+        Page<TransactionResponseDTO> transactionResponseDTO = transactionService.findAllTransactions(page, size);
+        LOG.info("Fetching all transactions completed");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "Transaction found", transactionResponseDTO));
     }

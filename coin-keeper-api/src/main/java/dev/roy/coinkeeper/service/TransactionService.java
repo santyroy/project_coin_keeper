@@ -9,6 +9,8 @@ import dev.roy.coinkeeper.exception.BudgetNotFoundException;
 import dev.roy.coinkeeper.exception.TransactionNotFoundException;
 import dev.roy.coinkeeper.repository.BudgetRepository;
 import dev.roy.coinkeeper.repository.TransactionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,14 @@ public class TransactionService {
         Transaction updatedTransaction = transactionRepository.save(transaction);
         return new TransactionResponseDTO(updatedTransaction.getType(), updatedTransaction.getAmount(),
                 updatedTransaction.getCategory(), updatedTransaction.getDate(), updatedTransaction.getBudget().getId());
+    }
+
+    public Page<TransactionResponseDTO> findAllTransactions(Integer pageNo, Integer pageSize) {
+        PageRequest page = PageRequest.of(pageNo, pageSize);
+        Page<Transaction> transactions = transactionRepository.findAll(page);
+        return transactions
+                .map(transaction -> new TransactionResponseDTO(transaction.getType(), transaction.getAmount(),
+                        transaction.getCategory(), transaction.getDate(), transaction.getBudget().getId()));
     }
 
     private Transaction getTransaction(Integer transactionId) {
