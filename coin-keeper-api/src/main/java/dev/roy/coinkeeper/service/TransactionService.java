@@ -59,6 +59,22 @@ public class TransactionService {
         transactionRepository.delete(transaction);
     }
 
+    public TransactionResponseDTO updateTransactionById(Integer transactionId, TransactionRequestDTO dto) {
+        Transaction transaction = getTransaction(transactionId);
+        if (dto.type() != null) {
+            transaction.setType(TransactionType.CREDIT.name().equals(dto.type().toUpperCase()) ? TransactionType.CREDIT : TransactionType.DEBIT);
+        }
+        if (dto.amount() != null && dto.amount() > 0) {
+            transaction.setAmount(dto.amount());
+        }
+        if (dto.category() != null) {
+            transaction.setCategory(dto.category());
+        }
+        Transaction updatedTransaction = transactionRepository.save(transaction);
+        return new TransactionResponseDTO(updatedTransaction.getType(), updatedTransaction.getAmount(),
+                updatedTransaction.getCategory(), updatedTransaction.getDate(), updatedTransaction.getBudget().getId());
+    }
+
     private Transaction getTransaction(Integer transactionId) {
         Optional<Transaction> transactionOpt = transactionRepository.findById(transactionId);
         if (transactionOpt.isEmpty()) {

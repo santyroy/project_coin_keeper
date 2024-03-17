@@ -49,4 +49,14 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "Transaction deleted", null));
     }
+
+    @PutMapping("{transactionId}")
+    public ResponseEntity<ApiResponse> updateTransactionById(@PathVariable Integer transactionId,
+                                                             @RequestBody TransactionRequestDTO dto) {
+        LOG.info("Updating transaction started");
+        TransactionResponseDTO transactionResponseDTO = transactionService.updateTransactionById(transactionId, dto);
+        LOG.info("Updating transaction completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Transaction found", transactionResponseDTO));
+    }
 }
