@@ -59,37 +59,17 @@ public class UserService {
     }
 
     public UserResponseDTO findUserById(Integer userId) {
-        Optional<User> userOpt = userRepository.findById(userId);
-
-        // Check if user does not exist
-        if (userOpt.isEmpty()) {
-            throw new UserNotFoundException("User with ID: " + userId + " not found");
-        }
-
-        User user = userOpt.get();
+        User user = getUser(userId);
         return new UserResponseDTO(user.getName(), user.getEmail());
     }
 
     public void deleteUserById(Integer userId) {
-        Optional<User> userOpt = userRepository.findById(userId);
-
-        // Check if user does not exist
-        if (userOpt.isEmpty()) {
-            throw new UserNotFoundException("User with ID: " + userId + " not found");
-        }
-
-        userRepository.delete(userOpt.get());
+        User user = getUser(userId);
+        userRepository.delete(user);
     }
 
     public UserResponseDTO updateUserById(Integer userId, UserRequestDTO dto) {
-        Optional<User> userOpt = userRepository.findById(userId);
-
-        // Check if user does not exist
-        if (userOpt.isEmpty()) {
-            throw new UserNotFoundException("User with ID: " + userId + " not found");
-        }
-
-        User existingUser = userOpt.get();
+        User existingUser = getUser(userId);
         if (null != dto.name() && !dto.name().isBlank()) {
             LOG.info("Updating name");
             existingUser.setName(dto.name());
@@ -116,5 +96,13 @@ public class UserService {
         PageRequest page = PageRequest.of(pageNo, pageSize);
         Page<User> users = userRepository.findAll(page);
         return users.map(user -> new UserResponseDTO(user.getName(), user.getEmail()));
+    }
+
+    private User getUser(Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new UserNotFoundException("User with ID: " + userId + " not found");
+        }
+        return userOpt.get();
     }
 }
