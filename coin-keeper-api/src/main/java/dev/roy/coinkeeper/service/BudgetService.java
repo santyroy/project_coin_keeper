@@ -10,6 +10,8 @@ import dev.roy.coinkeeper.repository.BudgetRepository;
 import dev.roy.coinkeeper.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,5 +98,13 @@ public class BudgetService {
             throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
         }
         return budgetOpt.get();
+    }
+
+    public Page<BudgetResponseDTO> findAllBudgets(int pageNo, int pageSize) {
+        PageRequest page = PageRequest.of(pageNo, pageSize);
+        Page<Budget> budgets = budgetRepository.findAll(page);
+        return budgets
+                .map(budget -> new BudgetResponseDTO(budget.getId(), budget.getName(), budget.getType(),
+                        budget.getGoal(), budget.getOpenDate(), budget.getUser().getId()));
     }
 }

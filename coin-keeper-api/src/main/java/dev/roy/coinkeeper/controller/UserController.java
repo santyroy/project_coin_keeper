@@ -66,9 +66,9 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponse> findAllUsers(@RequestParam(required = false, defaultValue = "0") int page,
                                                     @RequestParam(required = false, defaultValue = "5") int size) {
-        LOG.info("Fetching all user started");
+        LOG.info("Fetching all users started");
         Page<UserResponseDTO> allUsers = userService.findAllUsers(page, size);
-        LOG.info("Fetching all user completed");
+        LOG.info("Fetching all users completed");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "Users fetched", allUsers));
     }

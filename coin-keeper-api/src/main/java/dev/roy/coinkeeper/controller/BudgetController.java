@@ -8,6 +8,7 @@ import dev.roy.coinkeeper.service.BudgetService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,5 +60,15 @@ public class BudgetController {
         LOG.info("Updating budget completed");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "Budget updated", budgetResponseDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse> findAllBudgets(@RequestParam(required = false, defaultValue = "0") int page,
+                                                    @RequestParam(required = false, defaultValue = "5") int size) {
+        LOG.info("Fetching all budgets started");
+        Page<BudgetResponseDTO> allBudgets = budgetService.findAllBudgets(page, size);
+        LOG.info("Fetching all budgets completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Users fetched", allBudgets));
     }
 }
