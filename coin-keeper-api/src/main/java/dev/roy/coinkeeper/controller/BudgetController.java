@@ -63,11 +63,22 @@ public class BudgetController {
 
     @GetMapping
     public ResponseEntity<ApiResponse> findAllBudgets(@RequestParam(required = false, defaultValue = "0") int page,
-                                                    @RequestParam(required = false, defaultValue = "5") int size) {
+                                                      @RequestParam(required = false, defaultValue = "5") int size) {
         LOG.info("Fetching all budgets started");
         Page<BudgetResponseDTO> allBudgets = budgetService.findAllBudgets(page, size);
         LOG.info("Fetching all budgets completed");
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponse(true, 200, "Users fetched", allBudgets));
+                .body(new ApiResponse(true, 200, "Budgets fetched", allBudgets));
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ApiResponse> findAllBudgetsByUser(@PathVariable Integer userId,
+                                                            @RequestParam(required = false, defaultValue = "0") int page,
+                                                            @RequestParam(required = false, defaultValue = "5") int size) {
+        LOG.info("Fetching all budgets started");
+        Page<BudgetResponseDTO> allBudgets = budgetService.findAllBudgetsByUser(userId, page, size);
+        LOG.info("Fetching all budgets completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Budgets fetched", allBudgets));
     }
 }

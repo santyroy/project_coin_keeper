@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,17 +36,11 @@ public class BudgetService {
     public BudgetResponseDTO addBudget(BudgetRequestDTO dto) {
         Integer userId = Integer.parseInt(dto.userId());
         LOG.info("Adding budget for userId: " + userId);
-        // Check if user exist
-        Optional<User> userOpt = userRepository.findById(userId);
-
-        // Check if user does not exist
-        if (userOpt.isEmpty()) {
-            throw new UserNotFoundException("User with ID: " + userId + " not found");
-        }
+        User user = getUser(userId);
 
         Budget budget = new Budget();
         budget.setName(dto.name());
-        budget.setUser(userOpt.get());
+        budget.setUser(user);
         budget.setOpenDate(LocalDateTime.now());
         budget.setTransactions(null);
 
@@ -106,5 +101,22 @@ public class BudgetService {
         return budgets
                 .map(budget -> new BudgetResponseDTO(budget.getId(), budget.getName(), budget.getType(),
                         budget.getGoal(), budget.getOpenDate(), budget.getUser().getId()));
+    }
+
+    public Page<BudgetResponseDTO> findAllBudgetsByUser(Integer userId, int pageNo, int pageSize) {
+        User user = getUser(userId);
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "openDate"));
+        Page<Budget> budgets = budgetRepository.findByUser(user, pageRequest);
+        return budgets
+                .map(budget -> new BudgetResponseDTO(budget.getId(), budget.getName(), budget.getType(),
+                        budget.getGoal(), budget.getOpenDate(), budget.getUser().getId()));
+    }
+
+    private User getUser(Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new UserNotFoundException("User with ID: " + userId + " not found");
+        }
+        return userOpt.get();
     }
 }
