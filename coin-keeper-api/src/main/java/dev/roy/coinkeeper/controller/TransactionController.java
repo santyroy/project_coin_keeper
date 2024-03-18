@@ -70,4 +70,15 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "Transaction found", transactionResponseDTO));
     }
+
+    @GetMapping("/budgets/{budgetId}")
+    public ResponseEntity<ApiResponse> findAllTransactionByBudget(@PathVariable Integer budgetId,
+                                                                  @RequestParam(required = false, defaultValue = "0") int page,
+                                                                  @RequestParam(required = false, defaultValue = "5") int size) {
+        LOG.info("Fetching all transactions by budget started");
+        Page<TransactionResponseDTO> transactionResponseDTO = transactionService.findAllTransactionsByBudget(budgetId, page, size);
+        LOG.info("Fetching all transactions  by budget completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Transaction found", transactionResponseDTO));
+    }
 }

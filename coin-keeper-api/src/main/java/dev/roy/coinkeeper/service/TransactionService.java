@@ -31,13 +31,10 @@ public class TransactionService {
 
     public TransactionResponseDTO addTransaction(TransactionRequestDTO dto) {
         Integer budgetId = Integer.parseInt(dto.budgetId());
-        Optional<Budget> budgetOpt = budgetRepository.findById(budgetId);
-        if (budgetOpt.isEmpty()) {
-            throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
-        }
+        Budget budget = getBudget(budgetId);
 
         Transaction transaction = new Transaction();
-        transaction.setBudget(budgetOpt.get());
+        transaction.setBudget(budget);
         transaction.setDate(LocalDateTime.now());
         transaction.setAmount(dto.amount());
         transaction.setType(TransactionType.CREDIT.name().equals(dto.type().toUpperCase()) ? TransactionType.CREDIT : TransactionType.DEBIT);
@@ -91,5 +88,22 @@ public class TransactionService {
             throw new TransactionNotFoundException("Transaction with id: " + transactionId + " not found");
         }
         return transactionOpt.get();
+    }
+
+    public Page<TransactionResponseDTO> findAllTransactionsByBudget(Integer budgetId, int pageNo, int pageSize) {
+        Budget budget = getBudget(budgetId);
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        Page<Transaction> transactions = transactionRepository.findTransactionByBudget(budget, pageRequest);
+        return transactions
+                .map(transaction -> new TransactionResponseDTO(transaction.getType(), transaction.getAmount(),
+                        transaction.getCategory(), transaction.getDate(), transaction.getBudget().getId()));
+    }
+
+    private Budget getBudget(Integer budgetId) {
+        Optional<Budget> budgetOpt = budgetRepository.findById(budgetId);
+        if (budgetOpt.isEmpty()) {
+            throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
+        }
+        return budgetOpt.get();
     }
 }
