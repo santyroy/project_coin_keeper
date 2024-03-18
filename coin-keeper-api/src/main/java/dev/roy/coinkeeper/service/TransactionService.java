@@ -5,9 +5,7 @@ import dev.roy.coinkeeper.dto.TransactionResponseDTO;
 import dev.roy.coinkeeper.entity.Budget;
 import dev.roy.coinkeeper.entity.Transaction;
 import dev.roy.coinkeeper.entity.TransactionType;
-import dev.roy.coinkeeper.exception.BudgetNotFoundException;
 import dev.roy.coinkeeper.exception.TransactionNotFoundException;
-import dev.roy.coinkeeper.repository.BudgetRepository;
 import dev.roy.coinkeeper.repository.TransactionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,16 +20,16 @@ import java.util.Optional;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final BudgetRepository budgetRepository;
+    private final BudgetService budgetService;
 
-    public TransactionService(TransactionRepository transactionRepository, BudgetRepository budgetRepository) {
+    public TransactionService(TransactionRepository transactionRepository, BudgetService budgetService) {
         this.transactionRepository = transactionRepository;
-        this.budgetRepository = budgetRepository;
+        this.budgetService = budgetService;
     }
 
     public TransactionResponseDTO addTransaction(TransactionRequestDTO dto) {
         Integer budgetId = Integer.parseInt(dto.budgetId());
-        Budget budget = getBudget(budgetId);
+        Budget budget = budgetService.getBudget(budgetId);
 
         Transaction transaction = new Transaction();
         transaction.setBudget(budget);
@@ -91,19 +89,11 @@ public class TransactionService {
     }
 
     public Page<TransactionResponseDTO> findAllTransactionsByBudget(Integer budgetId, int pageNo, int pageSize) {
-        Budget budget = getBudget(budgetId);
+        Budget budget = budgetService.getBudget(budgetId);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<Transaction> transactions = transactionRepository.findTransactionByBudget(budget, pageRequest);
         return transactions
                 .map(transaction -> new TransactionResponseDTO(transaction.getType(), transaction.getAmount(),
                         transaction.getCategory(), transaction.getDate(), transaction.getBudget().getId()));
-    }
-
-    private Budget getBudget(Integer budgetId) {
-        Optional<Budget> budgetOpt = budgetRepository.findById(budgetId);
-        if (budgetOpt.isEmpty()) {
-            throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
-        }
-        return budgetOpt.get();
     }
 }

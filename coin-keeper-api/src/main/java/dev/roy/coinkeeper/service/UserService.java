@@ -98,7 +98,7 @@ public class UserService {
         return users.map(user -> new UserResponseDTO(user.getName(), user.getEmail()));
     }
 
-    private User getUser(Integer userId) {
+    protected User getUser(Integer userId) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
             throw new UserNotFoundException("User with ID: " + userId + " not found");
