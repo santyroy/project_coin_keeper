@@ -28,7 +28,7 @@ public class TransactionService {
     }
 
     public TransactionResponseDTO addTransaction(TransactionRequestDTO dto) {
-        Integer budgetId = Integer.parseInt(dto.budgetId());
+        Integer budgetId = dto.budgetId();
         Budget budget = budgetService.getBudget(budgetId);
 
         Transaction transaction = new Transaction();
@@ -80,14 +80,6 @@ public class TransactionService {
                         transaction.getCategory(), transaction.getDate(), transaction.getBudget().getId()));
     }
 
-    private Transaction getTransaction(Integer transactionId) {
-        Optional<Transaction> transactionOpt = transactionRepository.findById(transactionId);
-        if (transactionOpt.isEmpty()) {
-            throw new TransactionNotFoundException("Transaction with id: " + transactionId + " not found");
-        }
-        return transactionOpt.get();
-    }
-
     public Page<TransactionResponseDTO> findAllTransactionsByBudget(Integer budgetId, int pageNo, int pageSize) {
         Budget budget = budgetService.getBudget(budgetId);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
@@ -95,5 +87,13 @@ public class TransactionService {
         return transactions
                 .map(transaction -> new TransactionResponseDTO(transaction.getType(), transaction.getAmount(),
                         transaction.getCategory(), transaction.getDate(), transaction.getBudget().getId()));
+    }
+
+    private Transaction getTransaction(Integer transactionId) {
+        Optional<Transaction> transactionOpt = transactionRepository.findById(transactionId);
+        if (transactionOpt.isEmpty()) {
+            throw new TransactionNotFoundException("Transaction with id: " + transactionId + " not found");
+        }
+        return transactionOpt.get();
     }
 }

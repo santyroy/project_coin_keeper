@@ -13,6 +13,7 @@ public record TransactionRequestDTO(
         @Positive
         Float amount,
         String category,
-        @NotBlank(message = "BudgetId is mandatory")
-        String budgetId) {
+        @NotNull(message = "BudgetId is mandatory")
+        @Positive
+        Integer budgetId) {
 }

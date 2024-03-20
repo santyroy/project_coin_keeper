@@ -32,7 +32,7 @@ public class BudgetService {
     }
 
     public BudgetResponseDTO addBudget(BudgetRequestDTO dto) {
-        Integer userId = Integer.parseInt(dto.userId());
+        Integer userId = dto.userId();
         LOG.info("Adding budget for userId: " + userId);
         User user = userService.getUser(userId);
 
@@ -85,14 +85,6 @@ public class BudgetService {
                 updatedBudget.getGoal(), updatedBudget.getOpenDate(), updatedBudget.getUser().getId());
     }
 
-    protected Budget getBudget(Integer budgetId) {
-        Optional<Budget> budgetOpt = budgetRepository.findById(budgetId);
-        if (budgetOpt.isEmpty()) {
-            throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
-        }
-        return budgetOpt.get();
-    }
-
     public Page<BudgetResponseDTO> findAllBudgets(int pageNo, int pageSize) {
         PageRequest page = PageRequest.of(pageNo, pageSize);
         Page<Budget> budgets = budgetRepository.findAll(page);
@@ -108,5 +100,13 @@ public class BudgetService {
         return budgets
                 .map(budget -> new BudgetResponseDTO(budget.getId(), budget.getName(), budget.getType(),
                         budget.getGoal(), budget.getOpenDate(), budget.getUser().getId()));
+    }
+
+    protected Budget getBudget(Integer budgetId) {
+        Optional<Budget> budgetOpt = budgetRepository.findById(budgetId);
+        if (budgetOpt.isEmpty()) {
+            throw new BudgetNotFoundException("Budget with id: " + budgetId + " not found");
+        }
+        return budgetOpt.get();
     }
 }
