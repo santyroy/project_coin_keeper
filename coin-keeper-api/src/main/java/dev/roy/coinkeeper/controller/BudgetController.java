@@ -5,6 +5,7 @@ import dev.roy.coinkeeper.dto.BudgetRequestDTO;
 import dev.roy.coinkeeper.dto.BudgetResponseDTO;
 import dev.roy.coinkeeper.service.BudgetService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/budgets")
 public class BudgetController {
@@ -19,10 +21,6 @@ public class BudgetController {
     private static final Logger LOG = LoggerFactory.getLogger(BudgetController.class);
 
     private final BudgetService budgetService;
-
-    public BudgetController(BudgetService budgetService) {
-        this.budgetService = budgetService;
-    }
 
     @PostMapping
     public ResponseEntity<ApiResponse> addBudget(@Valid @RequestBody BudgetRequestDTO dto) {

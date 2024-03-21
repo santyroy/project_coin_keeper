@@ -5,6 +5,7 @@ import dev.roy.coinkeeper.dto.TransactionRequestDTO;
 import dev.roy.coinkeeper.dto.TransactionResponseDTO;
 import dev.roy.coinkeeper.service.TransactionService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
@@ -19,10 +21,6 @@ public class TransactionController {
     private static final Logger LOG = LoggerFactory.getLogger(TransactionController.class);
 
     private final TransactionService transactionService;
-
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
 
     @PostMapping
     public ResponseEntity<ApiResponse> addTransaction(@Valid @RequestBody TransactionRequestDTO dto) {
