@@ -7,6 +7,7 @@ import dev.roy.coinkeeper.entity.Transaction;
 import dev.roy.coinkeeper.entity.TransactionType;
 import dev.roy.coinkeeper.exception.TransactionNotFoundException;
 import dev.roy.coinkeeper.repository.TransactionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,15 +18,11 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final BudgetService budgetService;
-
-    public TransactionService(TransactionRepository transactionRepository, BudgetService budgetService) {
-        this.transactionRepository = transactionRepository;
-        this.budgetService = budgetService;
-    }
 
     public TransactionResponseDTO addTransaction(TransactionRequestDTO dto) {
         Integer budgetId = dto.budgetId();

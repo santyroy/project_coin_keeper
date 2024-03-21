@@ -9,11 +9,13 @@ import dev.roy.coinkeeper.exception.UserNotFoundException;
 import dev.roy.coinkeeper.exception.UserRoleNotFoundException;
 import dev.roy.coinkeeper.repository.RoleRepository;
 import dev.roy.coinkeeper.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +24,15 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-@Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponseDTO addUser(UserRequestDTO dto) {
         // Check if USER role exists
@@ -49,9 +47,8 @@ public class UserService {
             throw new UserEmailAlreadyExistsException("User email: " + email + " already exists");
         }
 
-        // TODO: Need to encrypt password using BCrypt
         User user = new User(0,
-                dto.name(), dto.email(), dto.password(), dto.picture(),
+                dto.name(), dto.email(), passwordEncoder.encode(dto.password()), dto.picture(),
                 LocalDateTime.now(), Set.of(roleOpt.get()), null);
         User savedUser = userRepository.save(user);
         LOG.info("User: " + savedUser.getName() + " with email: " + savedUser.getEmail() + " added to database");
@@ -84,8 +81,7 @@ public class UserService {
         }
         if (null != dto.password() && !dto.password().isBlank()) {
             LOG.info("Updating password");
-            // TODO: Need to encrypt password using BCrypt
-            existingUser.setPassword(dto.password());
+            existingUser.setPassword(passwordEncoder.encode(dto.password()));
         }
 
         User updateddUser = userRepository.save(existingUser);

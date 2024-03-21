@@ -6,6 +6,7 @@ import dev.roy.coinkeeper.entity.Budget;
 import dev.roy.coinkeeper.entity.User;
 import dev.roy.coinkeeper.exception.BudgetNotFoundException;
 import dev.roy.coinkeeper.repository.BudgetRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -19,17 +20,13 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class BudgetService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BudgetService.class);
 
     private final UserService userService;
     private final BudgetRepository budgetRepository;
-
-    public BudgetService(UserService userService, BudgetRepository budgetRepository) {
-        this.userService = userService;
-        this.budgetRepository = budgetRepository;
-    }
 
     public BudgetResponseDTO addBudget(BudgetRequestDTO dto) {
         Integer userId = dto.userId();
