@@ -1,4 +1,6 @@
 package dev.roy.coinkeeper.dto;
 
-public record LoginResponseDTO(String jwt) {
+import dev.roy.coinkeeper.entity.RefreshToken;
+
+public record LoginResponseDTO(String jwt, RefreshToken refreshToken) {
 }

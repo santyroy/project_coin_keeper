@@ -92,4 +92,11 @@ public class AppExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ApiResponse(false, 401, "Invalid Credentials", null));
     }
+
+    @ExceptionHandler(value = InvalidRefreshTokenException.class)
+    public ResponseEntity<ApiResponse> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+        LOG.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(false, 401, ex.getMessage(), null));
+    }
 }
