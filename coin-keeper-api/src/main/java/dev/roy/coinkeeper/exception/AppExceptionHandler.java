@@ -85,4 +85,11 @@ public class AppExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse(false, 404, "error", errors));
     }
+
+    @ExceptionHandler(value = InvalidCredentialsException.class)
+    public ResponseEntity<ApiResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        LOG.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(false, 401, "Invalid Credentials", null));
+    }
 }

@@ -1,8 +1,7 @@
 package dev.roy.coinkeeper.controller;
 
-import dev.roy.coinkeeper.dto.ApiResponse;
-import dev.roy.coinkeeper.dto.UserRequestDTO;
-import dev.roy.coinkeeper.dto.UserResponseDTO;
+import dev.roy.coinkeeper.dto.*;
+import dev.roy.coinkeeper.security.service.AuthenticationService;
 import dev.roy.coinkeeper.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,7 @@ public class AuthController {
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody UserRequestDTO dto) {
@@ -32,5 +32,14 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, 201, "User created", userResponseDTO));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequestDTO dto) {
+        LOG.info("Logging in user: " + dto.email());
+        LoginResponseDTO loginResponseDTO = authenticationService.login(dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "User logged in", loginResponseDTO));
     }
 }
