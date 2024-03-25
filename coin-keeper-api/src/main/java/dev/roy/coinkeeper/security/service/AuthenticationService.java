@@ -84,4 +84,13 @@ public class AuthenticationService {
 
         return tokenService.generateJWT(userOpt.get());
     }
+
+    public void deleteRefreshToken(Cookie cookie) {
+        String token = cookie.getValue();
+        Optional<RefreshToken> tokenOpt = tokenRepository.findByToken(token);
+        if (tokenOpt.isEmpty()) {
+            throw new InvalidRefreshTokenException("Invalid Refresh token");
+        }
+        tokenRepository.delete(tokenOpt.get());
+    }
 }

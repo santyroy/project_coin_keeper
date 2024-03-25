@@ -42,10 +42,9 @@ public class AuthController {
         LOG.info("Logging in user: " + dto.email());
         LoginResponseDTO loginResponseDTO = authenticationService.login(dto);
         Cookie cookie = new Cookie("refreshToken", loginResponseDTO.refreshToken().getToken());
-        cookie.setPath("/api/v1/auth/refresh");
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
-//        cookie.setMaxAge(loginResponseDTO.refreshToken().getExpiry().getSecond());
+        cookie.setMaxAge(24 * 60 * 60);
         response.addCookie(cookie);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -73,5 +72,30 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "success", jwt));
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        LOG.info("Logging out for user started");
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false, 400, "No cookies found", null));
+        }
+
+        Optional<Cookie> cookie = Arrays.stream(cookies)
+                .filter(c -> c.getName().equals("refreshToken")).findFirst();
+        if (cookie.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false, 400, "Invalid cookie", null));
+        }
+
+        authenticationService.deleteRefreshToken(cookie.get());
+        Cookie deleteCookie = new Cookie("refreshToken", null);
+        deleteCookie.setMaxAge(0);
+        response.addCookie(deleteCookie);
+        LOG.info("Logging out for user completed");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Log out successful", null));
     }
 }
