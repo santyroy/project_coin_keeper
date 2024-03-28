@@ -51,12 +51,12 @@ public class UserService {
                 LocalDateTime.now(), false, Set.of(roleOpt.get()), null);
         User savedUser = userRepository.save(user);
         LOG.info("User: " + savedUser.getName() + " with email: " + savedUser.getEmail() + " added to database");
-        return new UserResponseDTO(savedUser.getName(), savedUser.getEmail());
+        return new UserResponseDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
     }
 
     public UserResponseDTO findUserById(Integer userId) {
         User user = getUser(userId);
-        return new UserResponseDTO(user.getName(), user.getEmail());
+        return new UserResponseDTO(user.getId(), user.getName(), user.getEmail());
     }
 
     public void deleteUserById(Integer userId) {
@@ -84,13 +84,13 @@ public class UserService {
         }
 
         User updateddUser = userRepository.save(existingUser);
-        return new UserResponseDTO(updateddUser.getName(), updateddUser.getEmail());
+        return new UserResponseDTO(updateddUser.getId(), updateddUser.getName(), updateddUser.getEmail());
     }
 
     public Page<UserResponseDTO> findAllUsers(int pageNo, int pageSize) {
         PageRequest page = PageRequest.of(pageNo, pageSize);
         Page<User> users = userRepository.findAll(page);
-        return users.map(user -> new UserResponseDTO(user.getName(), user.getEmail()));
+        return users.map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail()));
     }
 
     public User getUser(Integer userId) {

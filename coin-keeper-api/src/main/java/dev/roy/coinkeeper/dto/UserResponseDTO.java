@@ -1,4 +1,4 @@
 package dev.roy.coinkeeper.dto;
 
-public record UserResponseDTO(String name, String email) {
+public record UserResponseDTO(Integer userId, String name, String email) {
 }

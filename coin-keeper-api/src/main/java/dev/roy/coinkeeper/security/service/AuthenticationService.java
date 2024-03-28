@@ -20,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,7 @@ public class AuthenticationService {
     private final RefreshTokenRepository tokenRepository;
     private final UserOTPRepository otpRepository;
     private final MailService mailService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponseDTO register(UserRequestDTO dto) {
         UserResponseDTO userResponseDTO = userService.addUser(dto);
@@ -55,7 +57,7 @@ public class AuthenticationService {
             Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
             String jwt = tokenService.generateJWT(auth);
 
-            RefreshToken savedRefreshToken = null;
+            RefreshToken savedRefreshToken;
             User user = userService.getUser(dto.email());
             // Check if refresh token exists for the user
             Optional<RefreshToken> rtOpt = tokenRepository.findByUser(user);
@@ -117,7 +119,7 @@ public class AuthenticationService {
         }
 
         String sub = "Welcome to coin keeper";
-        String body = "Hi " + user.getName() + ", \n\nPlease use the below OTP (valid for 15 minutes):  " + OTP + " for completing the registration";
+        String body = "Hi " + user.getName() + ", \n\nPlease use the below OTP (valid for 15 minutes):  " + OTP + " for completing the process";
         mailService.sendSimpleMessage(user.getEmail(), sub, body);
         LOG.info("Sending OTP via email for user: " + user.getEmail());
     }
@@ -144,5 +146,28 @@ public class AuthenticationService {
     public void resendOTP(ResendOTPRequestDTO dto) {
         User user = userService.getUser(dto.userId());
         sendOTPViaEmail(user);
+    }
+
+    public void verifyEmailAndSendOTP(ForgetPasswordRequestDTO dto) {
+        User user = userService.getUser(dto.email());
+        resendOTP(new ResendOTPRequestDTO(user.getId()));
+    }
+
+    public void resetPassword(ResetPasswordRequestDTO dto) {
+        // Verify the OTP of the user
+        User user = userService.getUser(dto.email());
+        Optional<UserOTP> userOTP = otpRepository.findByUser(user);
+        if (userOTP.isEmpty()) {
+            throw new InvalidOTPException("Invalid OTP");
+        }
+        if (!dto.otp().equals(userOTP.get().getOtp())) {
+            throw new InvalidOTPException("OTP mismatch");
+        }
+        if (userOTP.get().getExpiry().isBefore(LocalDateTime.now())) {
+            throw new InvalidOTPException("OTP expired");
+        }
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        userRepository.save(user);
+        otpRepository.delete(userOTP.get());
     }
 }

@@ -112,4 +112,18 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse(true, 200, "Log out successful", null));
     }
+
+    @PostMapping("/forgetPassword")
+    public ResponseEntity<ApiResponse> forgetPassword(@Valid @RequestBody ForgetPasswordRequestDTO dto) {
+        authenticationService.verifyEmailAndSendOTP(dto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "OTP sent to reset password", null));
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<ApiResponse> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO dto) {
+        authenticationService.resetPassword(dto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Reset password successful", null));
+    }
 }
