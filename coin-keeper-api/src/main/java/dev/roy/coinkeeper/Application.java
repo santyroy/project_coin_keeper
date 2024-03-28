@@ -2,7 +2,6 @@ package dev.roy.coinkeeper;
 
 import dev.roy.coinkeeper.entity.Role;
 import dev.roy.coinkeeper.repository.RoleRepository;
-import dev.roy.coinkeeper.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

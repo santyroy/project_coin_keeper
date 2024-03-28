@@ -99,4 +99,11 @@ public class AppExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ApiResponse(false, 401, ex.getMessage(), null));
     }
+
+    @ExceptionHandler(value = InvalidOTPException.class)
+    public ResponseEntity<ApiResponse> handleInvalidOTPException(InvalidOTPException ex) {
+        LOG.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(false, 401, ex.getMessage(), null));
+    }
 }

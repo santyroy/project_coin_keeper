@@ -29,6 +29,7 @@ public class User {
     private String password;
     private String picture;
     private LocalDateTime registerDate;
+    private boolean active;
 
     @ManyToMany
     @JoinTable(

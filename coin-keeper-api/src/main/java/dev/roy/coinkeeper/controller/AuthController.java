@@ -2,7 +2,6 @@ package dev.roy.coinkeeper.controller;
 
 import dev.roy.coinkeeper.dto.*;
 import dev.roy.coinkeeper.security.service.AuthenticationService;
-import dev.roy.coinkeeper.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,17 +23,32 @@ public class AuthController {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
 
-    private final UserService userService;
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody UserRequestDTO dto) {
         LOG.info("Registering of new user started");
-        UserResponseDTO userResponseDTO = userService.addUser(dto);
+        UserResponseDTO userResponseDTO = authenticationService.register(dto);
         LOG.info("New user successfully registered");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, 201, "User created", userResponseDTO));
+    }
+
+    @PostMapping("/verifyOtp")
+    public ResponseEntity<ApiResponse> verifyOTP(@Valid @RequestBody VerifyOTPRequestDTO dto) {
+        authenticationService.verifyOTP(dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "Email verification successful", null));
+    }
+
+    @PostMapping("/resendOtp")
+    public ResponseEntity<ApiResponse> resendOTP(@Valid @RequestBody ResendOTPRequestDTO dto) {
+        authenticationService.resendOTP(dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse(true, 200, "OTP resend successful", null));
     }
 
     @PostMapping("/login")

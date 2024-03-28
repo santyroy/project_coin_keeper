@@ -10,7 +10,6 @@ import dev.roy.coinkeeper.exception.UserRoleNotFoundException;
 import dev.roy.coinkeeper.repository.RoleRepository;
 import dev.roy.coinkeeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -49,7 +48,7 @@ public class UserService {
 
         User user = new User(0,
                 dto.name(), dto.email(), passwordEncoder.encode(dto.password()), dto.picture(),
-                LocalDateTime.now(), Set.of(roleOpt.get()), null);
+                LocalDateTime.now(), false, Set.of(roleOpt.get()), null);
         User savedUser = userRepository.save(user);
         LOG.info("User: " + savedUser.getName() + " with email: " + savedUser.getEmail() + " added to database");
         return new UserResponseDTO(savedUser.getName(), savedUser.getEmail());
@@ -94,10 +93,18 @@ public class UserService {
         return users.map(user -> new UserResponseDTO(user.getName(), user.getEmail()));
     }
 
-    protected User getUser(Integer userId) {
+    public User getUser(Integer userId) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
             throw new UserNotFoundException("User with ID: " + userId + " not found");
+        }
+        return userOpt.get();
+    }
+
+    public User getUser(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new UserNotFoundException("User with email: " + email + " not found");
         }
         return userOpt.get();
     }
